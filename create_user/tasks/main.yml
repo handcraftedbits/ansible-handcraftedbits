@@ -1,0 +1,47 @@
+---
+- name: check for user '{{create_user_username}}'
+  become_user: root
+  stat:
+    path: /home/{{create_user_username}}
+  register: create_user_check
+
+- name: create '{{create_user_username}}' group
+  become_user: root
+  group:
+    name: "{{create_user_username}}"
+    state: present
+  when: create_user_check.stat.exists == false
+
+- name: install mkpasswd
+  become_user: root
+  apt:
+    name: whois
+    state: present
+  when: create_user_check.stat.exists == false
+
+- name: hash user password
+  become_user: root
+  command: mkpasswd --method=sha-512 {{create_user_password}}
+  register: vm_password_hashed
+  when: create_user_check.stat.exists == false
+
+- name: create user '{{create_user_username}}'
+  become_user: root
+  user:
+    append: yes
+    createhome: yes
+    comment: "{{create_user_fullname|default(omit)}}"
+    group: "{{create_user_username}}"
+    home: /home/{{create_user_username}}
+    name: "{{create_user_username}}"
+    password: "{{vm_password_hashed.stdout}}"
+    state: present
+  when: create_user_check.stat.exists == false
+
+- name: add user '{{create_user_username}}' to groups
+  become_user: root
+  user:
+    append: yes
+    groups: "{{create_user_groups}}"
+    name: "{{create_user_username}}"
+  when: create_user_groups is defined

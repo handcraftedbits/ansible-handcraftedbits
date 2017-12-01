@@ -1,0 +1,31 @@
+---
+- name: collect variable [user ID]
+  become_user: "{{samba_host_username}}"
+  shell: id -u {{samba_host_username}}
+  register: samba_host_user_id
+
+- name: collect variable [group ID]
+  become_user: "{{samba_host_username}}"
+  shell: id -g {{samba_host_username}}
+  register: samba_host_group_id
+
+- name: create Docker environment file
+  become_user: root
+  template:
+    dest: "{{samba_host_path}}/.env"
+    group: "{{samba_host_username}}"
+    mode: "0600"
+    owner: "{{samba_host_username}}"
+    src: ../templates/.env.j2
+
+- name: start Docker services
+  become_user: root
+  shell: docker-compose up -d
+  args:
+    chdir: "{{samba_host_path}}"
+
+- name: stop Docker services
+  become_user: root
+  shell: docker-compose stop
+  args:
+    chdir: "{{samba_host_path}}"

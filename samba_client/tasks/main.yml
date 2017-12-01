@@ -1,0 +1,36 @@
+---
+- name: install cifs-utils package
+  become_user: root
+  apt:
+    name: cifs-utils
+    state: present
+
+- name: create share mountpoints
+  become_user: root
+  file:
+    group: "{{samba_client_username}}"
+    owner: "{{samba_client_username}}"
+    path: "{{samba_client_share_path}}/{{item}}"
+    state: directory
+  with_items: "{{samba_client_items}}"
+  when: samba_client_items is defined
+
+- name: create credentials file
+  become_user: "{{samba_client_username}}"
+  template:
+    dest: /home/{{samba_client_username}}/.smbcredentials
+    group: "{{samba_client_username}}"
+    mode: "0600"
+    owner: "{{samba_client_username}}"
+    src: ../templates/.smbcredentials.j2
+
+- name: add fstab entries for shares
+  become_user: root
+  mount:
+    fstype: cifs
+    opts: credentials=/home/{{samba_client_username}}/.smbcredentials,iocharset=utf8,sec=ntlmssp,uid={{samba_client_username}},gid={{samba_client_username}},vers=3.0,file_mode=0660,dir_mode=0770
+    path: "{{samba_client_share_path}}/{{item}}"
+    src: //{{samba_client_hostname}}/{{item}}
+    state: present
+  with_items: "{{samba_client_items}}"
+  when: samba_client_items is defined

@@ -1,0 +1,48 @@
+---
+- name: install TigerVNC
+  become_user: root
+  apt:
+    name: tigervnc-standalone-server
+    state: present
+    update_cache: yes
+
+- name: create configuration directory
+  become_user: "{{vnc_username}}"
+  file:
+    path: /home/{{vnc_username}}/.vnc
+    state: directory
+
+- name: set password
+  become_user: "{{vnc_username}}"
+  shell: echo -n {{vnc_password}} | vncpasswd -f > /home/{{vnc_username}}/.vnc/passwd
+
+- name: set password file permissions
+  become_user: "{{vnc_username}}"
+  file:
+    mode: "0600"
+    path: /home/{{vnc_username}}/.vnc/passwd
+    state: file
+
+- name: create xstartup file
+  become_user: "{{vnc_username}}"
+  copy:
+    content: |
+      "#!/bin/bash"
+      xrdb $HOME/.Xresources
+      startxfce4 &
+    dest: /home/{{vnc_username}}/.vnc/xstartup
+    group: "{{vnc_username}}"
+    mode: "0755"
+    owner: "{{vnc_username}}"
+
+- name: create systemd service
+  become_user: root
+  template:
+    dest: /etc/systemd/system/vncserver@.service
+    src: ../templates/vncserver@.service.j2
+
+- name: enable systemd service
+  become_user: root
+  service:
+    enabled: yes
+    name: vncserver@1

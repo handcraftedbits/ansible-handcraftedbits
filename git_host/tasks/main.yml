@@ -1,0 +1,43 @@
+---
+- name: change shell to git-shell
+  become_user: root
+  user:
+    name: "{{git_host_username}}"
+    shell: /usr/bin/git-shell
+
+- name: retrieve SSH keys
+  become_user: "{{git_host_username}}"
+  uri:
+    method: GET
+    return_content: yes
+    url: https://api.github.com/users/{{git_host_github_id}}/keys
+  register: keys
+
+- name: add authorized keys
+  become_user: "{{git_host_username}}"
+  authorized_key:
+    exclusive: no
+    key: "{{item}}"
+    user: "{{git_host_username}}"
+  with_items:
+    - "{{keys.json|json_query('[*].key')}}"
+
+- name: get repository names
+  become_user: root
+  find:
+    file_type: directory
+    paths: "{{git_host_repos_path}}"
+    patterns: "*.git"
+  register: repositories
+  when: git_host_repos_path is defined
+
+- name: link repositories
+  become_user: root
+  file:
+    dest: /home/{{git_host_username}}/{{item.path|basename}}
+    force: yes
+    owner:  "{{git_host_username}}"
+    src: "{{item.path}}"
+    state: link
+  with_items: "{{repositories.files}}"
+  when: git_host_repos_path is defined

@@ -1,0 +1,87 @@
+---
+- name: configure iptables-persistent package
+  become_user: root
+  debconf:
+    name: iptables-persistent
+    question: "{{item}}"
+    value: "true"
+    vtype: boolean
+  with_items:
+    - iptables-persistent/autosave_v4
+    - iptables-persistent/autosave_v6
+  when: iptables_disable == false
+
+- name: install iptables-persistent package
+  become_user: root
+  apt:
+    name: iptables-persistent
+    state: present
+  register: iptables_state0
+  when: iptables_disable == false
+
+- name: accept loopback traffic
+  become_user: root
+  iptables:
+    chain: INPUT
+    in_interface: lo
+    jump: ACCEPT
+  register: iptables_state1
+  when: iptables_disable == false
+
+- name: accept established connections
+  become_user: root
+  iptables:
+    chain: INPUT
+    ctstate: ESTABLISHED,RELATED
+    jump: ACCEPT
+  register: iptables_state2
+  when: iptables_disable == false
+
+- name: allow inbound SSH
+  become_user: root
+  iptables:
+    chain: INPUT
+    destination_port: "{{iptables_ssh_port}}"
+    jump: ACCEPT
+    protocol: tcp
+  register: iptables_state3
+  when: iptables_disable == false
+
+- name: allow inbound TCP traffic on custom ports
+  become_user: root
+  iptables:
+    chain: INPUT
+    destination_port: "{{item}}"
+    jump: ACCEPT
+    protocol: tcp
+  register: iptables_state4
+  when: iptables_disable == false and iptables_extra_ports != ''
+  with_items: "{{iptables_extra_ports.split(',')}}"
+
+- name: allow inbound UDP traffic on custom ports
+  become_user: root
+  iptables:
+    chain: INPUT
+    destination_port: "{{item}}"
+    jump: ACCEPT
+    protocol: udp
+  register: iptables_state5
+  when: iptables_disable == false and iptables_extra_ports_udp != ''
+  with_items: "{{iptables_extra_ports_udp.split(',')}}"
+
+- name: drop all other traffic
+  become_user: root
+  iptables:
+    chain: INPUT
+    jump: DROP
+  register: iptables_state6
+  when: iptables_disable == false
+
+- name: (iptables) save rules
+  become_user: root
+  shell: iptables-save > /etc/iptables/{{item}}
+  with_items:
+    - rules.v4
+    - rules.v6
+  when: iptables_disable == false and (iptables_state0.changed or iptables_state1.changed or iptables_state2.changed
+        or iptables_state3.changed or iptables_state4.changed or iptables_state5.changed or iptables_state6.changed)

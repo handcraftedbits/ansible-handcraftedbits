@@ -1,0 +1,34 @@
+---
+- name: install package
+  become_user: root
+  apt:
+    name: xfce4
+    state: present
+    update_cache: yes
+
+- name: remove configuration directories
+  become_user: "{{xfce_username}}"
+  file:
+    name: /home/{{xfce_username}}/{{item}}
+    state: absent
+  with_items:
+    - .config/xfce4
+    - Desktop
+
+- name: create configuration directory
+  become_user: "{{xfce_username}}"
+  file:
+    name: /home/{{xfce_username}}/.config/xfce4
+    recurse: yes
+    state: directory
+
+- name: link dotfiles
+  become_user: "{{xfce_username}}"
+  file:
+    dest: /home/{{xfce_username}}/{{item.dest}}
+    force: yes
+    src: /home/{{xfce_username}}/.cloned-repos/dotfiles/{{item.src}}
+    state: link
+  with_items:
+    - { src: "xfce4/xfconf", dest: ".config/xfce4/xfconf" }
+    - { src: "xfce4/Desktop", dest: "Desktop" }

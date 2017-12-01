@@ -1,0 +1,17 @@
+---
+- name: create configuration directory
+  become_user: "{{tmux_username}}"
+  file:
+    path: /home/{{tmux_username}}/.tmux
+    state: directory
+
+- name: link dotfiles
+  become_user: "{{tmux_username}}"
+  file:
+    dest: /home/{{tmux_username}}/{{item.dest}}
+    force: yes
+    src: /home/{{tmux_username}}/.cloned-repos/dotfiles/{{item.src}}
+    state: link
+  with_items:
+    - { src: "tmux/molokai.conf", dest: ".tmux/molokai.conf" }
+    - { src: "tmux/.tmux.conf", dest: ".tmux.conf" }

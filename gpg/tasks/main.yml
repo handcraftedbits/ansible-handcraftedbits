@@ -1,0 +1,44 @@
+---
+- name: install package
+  become_user: root
+  apt:
+    name: gnupg
+    state: present
+
+- name: fetch key
+  become_user: "{{gpg_username}}"
+  shell: gpg --recv-keys {{gpg_key}}
+
+- name: fetch keyserver certificate
+  become_user: root
+  get_url:
+    dest: /etc/ssl/certs/sks-keyservers.netCA.pem
+    url: https://sks-keyservers.net/sks-keyservers.netCA.pem
+
+- name: link dotfiles
+  become_user: "{{gpg_username}}"
+  file:
+    dest: /home/{{gpg_username}}/{{item.dest}}
+    force: yes
+    src: /home/{{gpg_username}}/.cloned-repos/dotfiles/{{item.src}}
+    state: link
+  with_items:
+    - { src: "gnupg/dirmngr.conf", dest: ".gnupg/dirmngr.conf" }
+    - { src: "gnupg/gpg-agent.conf", dest: ".gnupg/gpg-agent.conf" }
+    - { src: "gnupg/gpg.conf", dest: ".gnupg/gpg.conf" }
+
+# Taken from https://blog.tersmitten.nl/how-to-ultimately-trust-a-public-key-non-interactively.hml
+
+- name: trust key
+  become_user: "{{gpg_username}}"
+  shell: >
+    echo "$(gpg --list-keys --fingerprint | grep {{gpg_key}} -A 1 | tail -1 | tr -d '[:space:]'
+    | awk 'BEGIN { FS = "=" } ; { print $2 }'):6:" | gpg --import-ownertrust
+
+- name: update Zsh configuration
+  become_user: "{{gpg_username}}"
+  lineinfile:
+    dest: /home/{{gpg_username}}/.zshrc
+    line: export SSH_AUTH_SOCK=~/.gnupg/S.gpg-agent.ssh
+    regexp: ^export SSH_AUTH_SOCK
+    state: present

@@ -1,0 +1,36 @@
+---
+- name: set hostname
+  become_user: root
+  hostname:
+    name: "{{vm_basic_hostname}}"
+
+- name: add swap space
+  become_user: root
+  shell: |
+    fallocate -l {{vm_basic_swap}} /swapfile
+    chmod 600 /swapfile
+    mkswap /swapfile
+    echo "/swapfile none swap sw 0 0" | tee -a /etc/fstab
+  when: vm_basic_swap != ""
+
+- name: update all dependencies
+  become_user: root
+  apt:
+    update_cache: yes
+    upgrade: dist
+
+- name: install packages
+  become_user: root
+  apt:
+    name: "{{item}}"
+    state: present
+  with_items: "{{vm_basic_packages}}"
+
+- name: install Pygments and monokai-hcb theme
+  become_user: "{{vm_basic_username}}"
+  pip:
+    name: "{{item}}"
+    state: present
+  with_items:
+    - Pygments
+    - pygments-monokai-hcb

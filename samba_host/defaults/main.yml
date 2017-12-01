@@ -1,0 +1,2 @@
+---
+samba_host_path: /opt/vm/{{samba_host_hostname}}

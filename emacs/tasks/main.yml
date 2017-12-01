@@ -1,0 +1,32 @@
+---
+- name: add apt repository
+  become_user: root
+  apt_repository:
+    repo: ppa:ubuntu-elisp/ppa
+    state: present
+
+- name: install package
+  become_user: root
+  apt:
+    name: emacs25
+    state: present
+    update_cache: yes
+
+- name: add configuration directory
+  become_user: "{{emacs_username}}"
+  file:
+    group: "{{emacs_username}}"
+    owner: "{{emacs_username}}"
+    path: /home/{{emacs_username}}/.emacs.d
+    state: directory
+
+- name: link dotfiles
+  become_user: "{{emacs_username}}"
+  file:
+    dest: /home/{{emacs_username}}/{{item.dest}}
+    force: yes
+    src: /home/{{emacs_username}}/.cloned-repos/dotfiles/{{item.src}}
+    state: link
+  with_items:
+    - { src: "emacs/.emacs", dest: ".emacs" }
+    - { src: "emacs/config.org", dest: ".emacs.d/config.org" }

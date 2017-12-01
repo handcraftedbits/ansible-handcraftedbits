@@ -1,0 +1,5 @@
+---
+dependencies:
+  - role: handcraftedbits/docker
+    docker_password: "{{docker_host_password}}"
+    docker_username: "{{docker_host_username}}"

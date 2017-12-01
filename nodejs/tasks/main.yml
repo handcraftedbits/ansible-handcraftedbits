@@ -1,0 +1,23 @@
+---
+- name: download install script
+  become_user: root
+  get_url:
+    dest: /tmp/install_node.sh
+    url: "{{nodejs_download_url}}"
+
+- name: add repository
+  become_user: root
+  shell: /bin/bash /tmp/install_node.sh
+
+- name: install package
+  become_user: root
+  apt:
+    name: nodejs
+    state: present
+    update_cache: yes
+
+- name: install extra tools
+  become_user: root
+  shell: npm install -g {{item}}
+  with_items: "{{nodejs_extra_tools}}"
+  when: nodejs_extra_tools is defined

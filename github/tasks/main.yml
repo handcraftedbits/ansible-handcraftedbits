@@ -1,0 +1,53 @@
+---
+- name: check if projects are already cloned
+  become_user: root
+  stat:
+    path: /tmp/github_projects.cloned
+  register: github_projects_cloned
+
+- name: add projects directory
+  become_user: root
+  file:
+    group: "{{github_username}}"
+    owner: "{{github_username}}"
+    path: "{{github_path_projects}}"
+    state: directory
+  when: github_projects_cloned.stat.exists == false
+
+- name: retrieve projects
+  become_user: "{{github_username}}"
+  uri:
+    method: GET
+    return_content: yes
+    url: https://api.github.com/users/{{github_id}}/repos
+  register: projects
+  when: github_projects_cloned.stat.exists == false
+
+- name: clone projects
+  become_user: "{{github_username}}"
+  git:
+    dest: "{{github_path_projects}}/{{item.name}}"
+    repo: "{{item.clone_url}}"
+    recursive: yes
+  with_items:
+    - "{{projects.json|json_query('[*].{name: name, clone_url: clone_url}')}}"
+  when: github_projects_cloned.stat.exists == false
+  
+- name: change remote URL for all projects
+  become_user: "{{github_username}}"
+  git_config:
+    name: remote.origin.url
+    repo: "{{github_path_projects}}/{{item.name}}"
+    scope: local
+    value: "{{item.ssh_url}}"
+  with_items:
+    - "{{projects.json|json_query('[*].{name: name, ssh_url: ssh_url}')}}"
+  when: github_projects_cloned.stat.exists == false
+
+- name: mark projects as cloned
+  become_user: root
+  copy:
+    content: ""
+    dest: /tmp/github_projects.cloned
+    force: no
+  when: github_projects_cloned.stat.exists == false

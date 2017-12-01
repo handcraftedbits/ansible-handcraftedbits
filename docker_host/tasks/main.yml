@@ -1,0 +1,22 @@
+---
+- name: create Docker host directory
+  become_user: root
+  file:
+    group: "{{docker_host_username}}"
+    owner: "{{docker_host_username}}"
+    path: "{{docker_host_path}}"
+    state: directory
+
+- name: copy Docker host configuration
+  become_user: root
+  copy:
+    dest: "{{docker_host_path}}"
+    group: "{{docker_host_username}}"
+    owner: "{{docker_host_username}}"
+    src: "/tmp/{{docker_host_hostname}}/"
+
+- name: remove params.json
+  become_user: root
+  file:
+    path: "{{docker_host_path}}/params.json"
+    state: absent

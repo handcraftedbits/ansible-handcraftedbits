@@ -1,0 +1,40 @@
+---
+- name: install package
+  become_user: root
+  apt:
+    name: zsh
+    state: present
+
+- name: change shell to Zsh for user '{{zsh_username}}'
+  become_user: root
+  user:
+    name: "{{zsh_username}}"
+    shell: /usr/bin/zsh
+
+- name: install Oh My Zsh
+  become_user: "{{zsh_username}}"
+  git:
+    dest: /home/{{zsh_username}}/.oh-my-zsh
+    repo: https://github.com/robbyrussell/oh-my-zsh
+
+- name: install zsh-autosuggestions plugin
+  become_user: "{{zsh_username}}"
+  git:
+    dest: /home/{{zsh_username}}/.oh-my-zsh/custom/plugins/zsh-autosuggestions
+    repo: https://github.com/zsh-users/zsh-autosuggestions.git
+
+- name: create custom theme directory
+  become_user: "{{zsh_username}}"
+  file:
+    path: /home/{{zsh_username}}/.oh-my-zsh/custom/themes
+    state: directory
+
+- name: link dotfiles
+  become_user: "{{zsh_username}}"
+  file:
+    dest: /home/{{zsh_username}}/{{item.dest}}
+    src: /home/{{zsh_username}}/.cloned-repos/dotfiles/{{item.src}}
+    state: link
+  with_items:
+    - { src: "zsh/.zshrc", dest: ".zshrc" }
+    - { src: "zsh/handcraftedbits.zsh-theme", dest: ".oh-my-zsh/custom/themes/handcraftedbits.zsh-theme" }

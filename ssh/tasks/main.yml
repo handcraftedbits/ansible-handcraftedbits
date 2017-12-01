@@ -1,0 +1,31 @@
+---
+- name: retrieve SSH keys
+  become_user: "{{ssh_username}}"
+  uri:
+    method: GET
+    return_content: yes
+    url: https://api.github.com/users/{{ssh_github_id}}/keys
+  register: keys
+
+- name: add authorized keys
+  become_user: "{{ssh_username}}"
+  authorized_key:
+    exclusive: no
+    key: "{{item}}"
+    user: "{{ssh_username}}"
+  with_items:
+    - "{{keys.json|json_query('[*].key')}}"
+
+- name: update sshd configuration
+  become_user: root
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    line: "{{item.line}}"
+    regexp: "{{item.regexp}}"
+    state: present
+  with_items:
+    - { regexp: "^Port", line: "Port {{ssh_port}}" }
+    - { regexp: "^PasswordAuthentication", line: "PasswordAuthentication no" }
+    - { regexp: "^PermitRootLogin", line: "PermitRootLogin no" }
+    - { regexp: "^PubkeyAuthentication", line: "PubkeyAuthentication yes" }
+    - { regexp: "^StreamLocalBindUnlink", line: "StreamLocalBindUnlink yes" }

@@ -1,0 +1,13 @@
+[Unit]
+Description=Start VNC server at startup
+After=syslog.target network.target
+[Service]
+Type=forking
+User={{vnc_username}}
+PAMName=login
+PIDFile=/home/{{vnc_username}}/.vnc/%H:%i.pid
+ExecStartPre=-/usr/bin/vncserver -kill :%i > /dev/null 2>&1
+ExecStart=/usr/bin/vncserver -depth 24 -geometry 1024x768 -localhost no :%i
+ExecStop=/usr/bin/vncserver -kill :%i
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,53 @@
+---
+- name: install CLI tool
+  become_user: "{{s3_clone_username}}"
+  command: pip install awscli --upgrade --user
+
+- name: create AWS configuration directory
+  become_user: "{{s3_clone_username}}"
+  file:
+    group: "{{s3_clone_username}}"
+    owner: "{{s3_clone_username}}"
+    path: /home/{{s3_clone_username}}/.aws
+    state: directory
+
+- name: create AWS configuration file
+  become_user: "{{s3_clone_username}}"
+  template:
+    dest: /home/{{s3_clone_username}}/.aws/config
+    group: "{{s3_clone_username}}"
+    mode: "0600"
+    owner: "{{s3_clone_username}}"
+    src: ../templates/config.j2
+
+- name: create AWS credentials file
+  become_user: "{{s3_clone_username}}"
+  template:
+    dest: /home/{{s3_clone_username}}/.aws/credentials
+    group: "{{s3_clone_username}}"
+    mode: "0600"
+    owner: "{{s3_clone_username}}"
+    src: ../templates/credentials.j2
+
+- name: add ZSH alias
+  become_user: "{{s3_clone_username}}"
+  lineinfile:
+    dest: /home/{{s3_clone_username}}/.zshrc
+    line: alias aws='~/.local/bin/aws'
+    regexp: ^alias aws
+    state: present
+
+- name: create directory for cloned buckets
+  become_user: root
+  file:
+    group: "{{s3_clone_username}}"
+    owner: "{{s3_clone_username}}"
+    path: "{{s3_clone_path}}"
+    state: directory
+  when: s3_clone_buckets is defined
+
+- name: clone s3 buckets
+  become_user: "{{s3_clone_username}}"
+  command: /home/{{s3_clone_username}}/.local/bin/aws s3 sync s3://{{item.name}} {{s3_clone_path}}/{{item.path}}
+  with_items: "{{s3_clone_buckets}}"
+  when: s3_clone_buckets is defined

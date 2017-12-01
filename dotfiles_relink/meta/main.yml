@@ -1,0 +1,6 @@
+---
+dependencies:
+  - role: handcraftedbits/github
+    github_id: "{{dotfiles_relink_github_id}}"
+    github_password: "{{dotfiles_relink_password}}"
+    github_username: "{{dotfiles_relink_username}}"

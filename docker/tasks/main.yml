@@ -1,0 +1,45 @@
+---
+- name: install dependencies
+  become_user: root
+  apt:
+    name: "{{item}}"
+    state: present
+    update_cache: yes
+  with_items:
+    - apt-transport-https
+    - ca-certificates
+
+- name: add repository key
+  become_user: root
+  apt_key:
+    state: present
+    url: https://download.docker.com/linux/ubuntu/gpg
+  
+- name: get Ubuntu release name
+  command: lsb_release -cs
+  register: docker_ubuntu_release
+
+- name: add repository
+  become_user: root
+  apt_repository:
+    repo: deb https://download.docker.com/linux/ubuntu {{docker_ubuntu_release.stdout}} stable main
+
+- name: install package
+  become_user: root
+  apt:
+    name: docker-ce
+    update_cache: yes
+
+- name: install docker-compose
+  become_user: root
+  get_url:
+    dest: /usr/local/bin/docker-compose
+    mode: 0755
+    url: https://github.com/docker/compose/releases/download/{{docker_compose_version}}/docker-compose-Linux-x86_64
+
+- name: add user '{{docker_username}}' to group
+  become_user: root
+  user:
+    append: yes
+    groups: docker
+    name: "{{docker_username}}"

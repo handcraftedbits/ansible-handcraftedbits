@@ -1,0 +1,5 @@
+---
+dependencies:
+  - role: handcraftedbits/dotfiles_clone
+    dotfiles_clone_password: "{{tmux_password}}"
+    dotfiles_clone_username: "{{tmux_username}}"

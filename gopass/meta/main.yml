@@ -1,0 +1,5 @@
+---
+dependencies:
+  - role: handcraftedbits/create_user
+    create_user_password: "{{gopass_password}}"
+    create_user_username: "{{gopass_username}}"

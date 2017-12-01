@@ -1,0 +1,5 @@
+---
+dependencies:
+  - role: handcraftedbits/dotfiles_clone
+    dotfiles_clone_password: "{{java_password}}"
+    dotfiles_clone_username: "{{java_username}}"

@@ -1,0 +1,40 @@
+---
+- name: add apt repository
+  become_user: root
+  apt_repository:
+    repo: ppa:gophers/archive
+    state: present
+
+- name: install package
+  become_user: root
+  apt:
+    name: golang-{{go_version}}
+    state: present
+    update_cache: yes
+
+- name: add project directory
+  become_user: root
+  file:
+    group: "{{go_username}}"
+    owner: "{{go_username}}"
+    path: "{{go_path}}"
+    recurse: yes
+    state: directory
+
+- name: install extra packages
+  become_user: "{{go_username}}"
+  shell: GOPATH={{go_path}} GOROOT=/usr/lib/go-{{go_version}} PATH=/usr/lib/go-{{go_version}}/bin:$PATH go get {{item}}
+  with_items: "{{go_extra_packages}}"
+  when: go_extra_packages is defined
+
+- name: update Zsh configuration
+  become_user: "{{go_username}}"
+  lineinfile:
+    dest: /home/{{go_username}}/.zshrc
+    line: "{{item.line}}"
+    regexp: "{{item.regexp}}"
+    state: present
+  with_items:
+    - { regexp: "^export GOPATH", line: "export GOPATH={{go_path}}" }
+    - { regexp: "^export GOROOT", line: "export GOROOT=/usr/lib/go-{{go_version}}" }
+    - { regexp: "^export PATH", line: "export PATH=$GOROOT/bin:$GOPATH/bin:$PATH" }

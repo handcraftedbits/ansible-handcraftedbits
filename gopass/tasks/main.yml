@@ -1,0 +1,22 @@
+---
+- name: install package
+  become_user: root
+  apt:
+    deb: https://github.com/justwatchcom/gopass/releases/download/v{{gopass_version}}/gopass-{{gopass_version}}-linux-amd64.deb
+
+- name: add configuration directory
+  become_user: "{{gopass_username}}"
+  file:
+    group: "{{gopass_username}}"
+    owner: "{{gopass_username}}"
+    path: /home/{{gopass_username}}/.config/gopass
+    recurse: yes
+    state: directory
+
+- name: create configuration file
+  become_user: "{{gopass_username}}"
+  template:
+    dest: /home/{{gopass_username}}/.config/gopass/config.yml
+    group: "{{gopass_username}}"
+    owner: "{{gopass_username}}"
+    src: ../templates/config.yml.j2

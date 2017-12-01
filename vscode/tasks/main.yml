@@ -1,0 +1,75 @@
+---
+- name: add apt key
+  become_user: root
+  apt_key:
+    state: present
+    url: https://packages.microsoft.com/keys/microsoft.asc
+
+- name: add repository
+  become_user: root
+  apt_repository:
+    state: present
+    repo: "deb [arch=amd64] http://packages.microsoft.com/repos/vscode stable main"
+
+- name: configure Microsoft fonts package
+  become_user: root
+  debconf:
+    name: ttf-mscorefonts-installer
+    question: msttcorefonts/{{item.name}}
+    value: "{{item.value}}"
+    vtype: "{{item.vtype}}"
+  with_items:
+    - { name: "accepted-mscorefonts-eula", value: "true", vtype: "select" }
+    - { name: "present-mscorefonts-eula", value: "", vtype: "note" }
+
+- name: install packages
+  become_user: root
+  apt:
+    name: "{{item}}"
+    state: present
+    update_cache: yes
+  with_items:
+    - code
+    - libasound2
+    - libgconf-2-4
+    - libgtk2.0-0
+    - libxss1
+    - ttf-mscorefonts-installer
+
+- name: install extensions
+  become_user: "{{vscode_username}}"
+  shell: code --install-extension {{item}} --user-data-dir=/home/{{vscode_username}}/.vscodetemp
+  with_items: "{{vscode_extensions}}"
+
+- name: create user config directory
+  become_user: "{{vscode_username}}"
+  file:
+    group: "{{vscode_username}}"
+    owner: "{{vscode_username}}"
+    path: /home/{{vscode_username}}/.config/Code/User
+    recurse: true
+    state: directory
+
+- name: link dotfiles
+  become_user: "{{vscode_username}}"
+  file:
+    dest: /home/{{vscode_username}}/.config/Code/User/settings.json
+    force: yes
+    src: /home/{{vscode_username}}/.cloned-repos/dotfiles/vscode/settings.json
+    state: link
+
+- name: fix font directory permissions
+  become_user: root
+  file:
+    group: "{{vscode_username}}"
+    owner: "{{vscode_username}}"
+    path: /usr/local/share/fonts
+    recurse: yes
+    state: directory
+
+- name: install Source Code Pro font
+  become_user: root
+  unarchive:
+    dest: /usr/local/share/fonts
+    remote_src: yes
+    src: https://github.com/adobe-fonts/source-code-pro/archive/2.030R-ro/1.050R-it.tar.gz

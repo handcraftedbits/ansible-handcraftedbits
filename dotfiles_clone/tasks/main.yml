@@ -1,0 +1,13 @@
+---
+- name: check for existing checkout
+  become_user: root
+  stat:
+    path: /home/{{dotfiles_clone_username}}/.cloned-repos/dotfiles
+  register: dotfiles_clone_repo_check
+
+- name: clone dotfiles
+  become_user: "{{dotfiles_clone_username}}"
+  git:
+    dest: /home/{{dotfiles_clone_username}}/.cloned-repos/dotfiles
+    repo: "{{dotfiles_clone_repo}}"
+  when: dotfiles_clone_repo_check.stat.exists == false

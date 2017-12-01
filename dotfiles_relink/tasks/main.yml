@@ -1,0 +1,23 @@
+---
+- name: update dotfile links to development versions
+  become_user: "{{dotfiles_relink_username}}"
+  file:
+    dest: /home/{{dotfiles_relink_username}}/{{item.dest}}
+    force: yes
+    src: "{{dotfiles_relink_path_projects}}/dotfiles/{{item.src}}"
+    state: link
+  with_items:
+    - { src: "emacs/.emacs", dest: ".emacs" }
+    - { src: "emacs/config.org", dest: ".emacs.d/config.org" }
+    - { src: "gnupg/dirmngr.conf", dest: ".gnupg/dirmngr.conf" }
+    - { src: "gnupg/gpg-agent.conf", dest: ".gnupg/gpg-agent.conf" }
+    - { src: "gnupg/gpg.conf", dest: ".gnupg/gpg.conf" }
+    - { src: "ssh/config", dest: ".ssh/config" }
+    - { src: "tmux/molokai.conf", dest: ".tmux/molokai.conf" }
+    - { src: "tmux/.tmux.conf", dest: ".tmux.conf" }
+    - { src: "vim/.vimrc", dest: ".vimrc" }
+    - { src: "vim/.vimrc", dest: ".config/nvim/init.vim" }
+    - { src: "vscode/settings.json", dest: ".config/Code/User/settings.json" }
+    - { src: "xfce4/xfconf", dest: ".config/xfce4/xfconf" }
+    - { src: "xfce4/Desktop", dest: "Desktop" }
+    - { src: "zsh/.zshrc", dest: ".zshrc" }

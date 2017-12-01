@@ -1,0 +1,16 @@
+---
+vm_basic_iptables_disable: no
+vm_basic_iptables_extra_ports: ""
+vm_basic_iptables_extra_ports_udp: ""
+vm_basic_packages:
+  - git
+  - jq
+  - man-db
+  - p7zip-full
+  - python-pip
+  - rar
+  - unrar
+  - unzip
+  - wget
+  - zip
+vm_basic_swap: ""
