@@ -70,5 +70,5 @@
     minute: "{{item.minute}}"
     name: Synchronize {{item.name}} S3 bucket
     user: "{{s3_clone_username}}"
-  with_item: "{{s3_clone_buckets}}"
+  with_items: "{{s3_clone_buckets}}"
   when: s3_clone_buckets is defined
