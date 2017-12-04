@@ -65,7 +65,7 @@
   cron:
     hour: "{{item.hour}}"
     job: >-
-      /home/{{s3_clone_username}}/.local/bin/aws s3 sync {{s3_clone_path}}/{{item.path}} s3://{{item.name}} >
+      /home/{{s3_clone_username}}/.local/bin/aws s3 sync --delete {{s3_clone_path}}/{{item.path}} s3://{{item.name}} >
       /var/log/s3_sync/{{item.name}}.log
     minute: "{{item.minute}}"
     name: Synchronize {{item.name}} S3 bucket
