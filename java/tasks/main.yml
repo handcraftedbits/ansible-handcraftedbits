@@ -29,7 +29,8 @@
 - name: update Zsh configuration
   become_user: "{{java_username}}"
   lineinfile:
-    dest: /home/{{java_username}}/.zshrc
-    line: export JAVA_HOME=/usr/lib/jvm/java-{{java_version}}-oracle
-    regexp: ^export JAVA_HOME
+    create: yes
+    line: "export JAVA_HOME=/usr/lib/jvm/java-{{java_version}}-oracle"
+    path: /home/{{java_username}}/.zshrc-extra
+    regexp: "^export JAVA_HOME"
     state: present

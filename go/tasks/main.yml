@@ -30,8 +30,9 @@
 - name: update Zsh configuration
   become_user: "{{go_username}}"
   lineinfile:
-    dest: /home/{{go_username}}/.zshrc
+    create: yes
     line: "{{item.line}}"
+    path: /home/{{go_username}}/.zshrc-extra
     regexp: "{{item.regexp}}"
     state: present
   with_items:

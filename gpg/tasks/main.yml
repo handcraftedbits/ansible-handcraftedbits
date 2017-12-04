@@ -38,7 +38,8 @@
 - name: update Zsh configuration
   become_user: "{{gpg_username}}"
   lineinfile:
-    dest: /home/{{gpg_username}}/.zshrc
-    line: export SSH_AUTH_SOCK=~/.gnupg/S.gpg-agent.ssh
-    regexp: ^export SSH_AUTH_SOCK
+    create: yes
+    line: "export SSH_AUTH_SOCK=~/.gnupg/S.gpg-agent.ssh"
+    path: /home/{{gpg_username}}/.zshrc-extra
+    regexp: "^export SSH_AUTH_SOCK"
     state: present

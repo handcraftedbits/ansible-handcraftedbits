@@ -32,9 +32,10 @@
 - name: add ZSH alias
   become_user: "{{s3_clone_username}}"
   lineinfile:
-    dest: /home/{{s3_clone_username}}/.zshrc
-    line: alias aws='~/.local/bin/aws'
-    regexp: ^alias aws
+    create: yes
+    line: "alias aws='~/.local/bin/aws'"
+    path: /home/{{s3_clone_username}}/.zshrc-extra
+    regexp: "^alias aws"
     state: present
 
 - name: create directory for cloned buckets
