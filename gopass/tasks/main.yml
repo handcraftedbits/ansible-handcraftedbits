@@ -4,7 +4,7 @@
   apt:
     deb: https://github.com/justwatchcom/gopass/releases/download/v{{gopass_version}}/gopass-{{gopass_version}}-linux-amd64.deb
 
-- name: create link from 'gopass' to 'pass'
+- name: create link from gopass to pass
   dest: /usr/local/bin/pass
   force: yes
   src: /usr/local/bin/gopass
