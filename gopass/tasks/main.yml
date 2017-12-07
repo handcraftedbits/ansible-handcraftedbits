@@ -5,10 +5,12 @@
     deb: https://github.com/justwatchcom/gopass/releases/download/v{{gopass_version}}/gopass-{{gopass_version}}-linux-amd64.deb
 
 - name: create link from gopass to pass
-  dest: /usr/local/bin/pass
-  force: yes
-  src: /usr/local/bin/gopass
-  state: link
+  become_user: root
+  file:
+    dest: /usr/local/bin/pass
+    force: yes
+    src: /usr/local/bin/gopass
+    state: link
 
 - name: add configuration directory
   become_user: "{{gopass_username}}"
