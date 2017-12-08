@@ -16,7 +16,11 @@
     state: present
     update_cache: yes
 
-- name: set unsafe-perm config attribute
+- name: set unsafe-perm config attribute (as 'root')
+  become_user: root
+  shell: npm config set unsafe-perm=true
+
+- name: set unsafe-perm config attribute (as '{{nodejs_username}}')
   become_user: "{{nodejs_username}}"
   shell: npm config set unsafe-perm=true
 
