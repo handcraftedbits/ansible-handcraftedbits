@@ -16,8 +16,8 @@
     state: present
     update_cache: yes
 
-- name: set unsafe-perm config
-  become_user: root
+- name: set unsafe-perm config attribute
+  become_user: "{{nodejs_username}}"
   shell: npm config set unsafe-perm=true
 
 - name: install extra tools
