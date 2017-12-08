@@ -22,6 +22,14 @@
     recurse: yes
     state: directory
 
+- name: disable screensaver
+  become_user: "{{xfce_username}}"
+  lineinfile:
+    dest: /home/{{xfce_username}}/.xscreensaver
+    line: "mode: off"
+    regexp: "^mode"
+    state: present
+
 - name: link dotfiles
   become_user: "{{xfce_username}}"
   file:
