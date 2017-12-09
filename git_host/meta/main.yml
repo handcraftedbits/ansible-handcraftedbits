@@ -1,5 +1,0 @@
----
-dependencies:
-  - role: handcraftedbits/create_user
-    create_user_password: "{{git_host_password}}"
-    create_user_username: "{{git_host_username}}"
