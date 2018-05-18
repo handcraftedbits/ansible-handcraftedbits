@@ -1,14 +1,9 @@
 ---
-- name: add apt repository
-  become_user: root
-  apt_repository:
-    repo: ppa:gophers/archive
-    state: present
-
 - name: install package
   become_user: root
   apt:
-    name: golang-{{go_version}}
+    default_release: stretch-backports
+    name: golang
     state: present
     update_cache: yes
 
@@ -31,8 +26,8 @@
   become_user: "{{go_username}}"
   lineinfile:
     create: yes
+    dest: /home/{{go_username}}/.zshrc-extra
     line: "{{item.line}}"
-    path: /home/{{go_username}}/.zshrc-extra
     regexp: "{{item.regexp}}"
     state: present
   with_items:

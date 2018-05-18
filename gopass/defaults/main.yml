@@ -1,2 +1,4 @@
 ---
-gopass_version: 1.6.2
+gopass_password_store_repo: ssh://{{gopass_ssh_key_id}}@git-codecommit.us-east-1.amazonaws.com/v1/repos/password-store
+gopass_version: 1.6.11
+

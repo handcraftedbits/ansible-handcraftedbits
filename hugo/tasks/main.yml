@@ -1,14 +1,6 @@
 ---
-- name: download and extract
+- name: install package
   become_user: root
-  unarchive:
-    dest: /tmp
-    remote_src: yes
-    src: https://github.com/spf13/hugo/releases/download/v{{hugo_version}}/hugo_{{hugo_version}}_Linux-64bit.tar.gz
+  apt:
+    deb: https://github.com/spf13/hugo/releases/download/v{{hugo_version}}/hugo_{{hugo_version}}_Linux-64bit.deb
 
-- name: move binary
-  become_user: root
-  copy:
-    dest: /usr/local/bin/hugo
-    mode: "0755"
-    src: /tmp/hugo

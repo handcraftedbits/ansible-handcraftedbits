@@ -28,3 +28,18 @@
     group: "{{gopass_username}}"
     owner: "{{gopass_username}}"
     src: ../templates/config.yml.j2
+
+- name: create SSH configuration directory
+  file:
+    dest: /home/{{gopass_username}}/.ssh
+    state: directory
+
+- name: add AWS CodeCommit configuration
+  become_user: "{{gopass_username}}"
+  blockinfile:
+    block: |
+      Host git-codecommit.*.amazonaws.com
+        User {{gopass_ssh_key_id}}
+    create: yes
+    dest: /home/{{gopass_username}}/.ssh/config
+

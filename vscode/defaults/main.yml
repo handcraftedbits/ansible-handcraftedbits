@@ -6,7 +6,7 @@ vscode_extensions:
   - PeterJausovec.vscode-docker
   - haaaad.ansible
   - humao.rest-client
-  - lukehoban.Go
+  - ms-vscode.Go
   - robertohuertasm.vscode-icons
   - shuworks.vscode-table-formatter
   - timonwong.ansible-autocomplete

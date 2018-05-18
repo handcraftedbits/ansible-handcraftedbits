@@ -6,6 +6,7 @@ vm_basic_packages:
   - git
   - jq
   - man-db
+  - net-tools
   - p7zip-full
   - pwgen
   - python-pip
@@ -15,3 +16,4 @@ vm_basic_packages:
   - wget
   - zip
 vm_basic_swap: ""
+

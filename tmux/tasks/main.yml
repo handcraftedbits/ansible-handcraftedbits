@@ -1,4 +1,10 @@
 ---
+- name: install package
+  become_user: root
+  apt:
+    name: tmux
+    state: present
+
 - name: create configuration directory
   become_user: "{{tmux_username}}"
   file:

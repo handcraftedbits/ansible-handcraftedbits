@@ -1,9 +1,12 @@
 ---
-- name: install package
+- name: install packages
   become_user: root
   apt:
-    name: gnupg
+    name: "{{item}}"
     state: present
+  with_items:
+    - dirmngr
+    - gnupg
 
 - name: fetch key
   become_user: "{{gpg_username}}"
@@ -39,7 +42,7 @@
   become_user: "{{gpg_username}}"
   lineinfile:
     create: yes
+    dest: /home/{{gpg_username}}/.zshrc-extra
     line: "export SSH_AUTH_SOCK=~/.gnupg/S.gpg-agent.ssh"
-    path: /home/{{gpg_username}}/.zshrc-extra
     regexp: "^export SSH_AUTH_SOCK"
     state: present

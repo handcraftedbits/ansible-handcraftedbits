@@ -16,7 +16,6 @@
     - { src: "tmux/molokai.conf", dest: ".tmux/molokai.conf" }
     - { src: "tmux/.tmux.conf", dest: ".tmux.conf" }
     - { src: "vim/.vimrc", dest: ".vimrc" }
-    - { src: "vim/.vimrc", dest: ".config/nvim/init.vim" }
     - { src: "vscode/settings.json", dest: ".config/Code/User/settings.json" }
     - { src: "xfce4/xfconf", dest: ".config/xfce4/xfconf" }
     - { src: "xfce4/Desktop", dest: "Desktop" }

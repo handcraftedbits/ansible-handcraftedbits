@@ -1,24 +1,9 @@
 ---
-- name: add apt repository
-  become_user: root
-  apt_repository:
-    repo: ppa:webupd8team/java
-    state: present
-
-- name: configure package
-  become_user: root
-  debconf:
-    name: oracle-java{{java_version}}-installer
-    question: shared/accepted-oracle-license-v1-1
-    value: "true"
-    vtype: select
-
 - name: install package
   become_user: root
   apt:
-    name: oracle-java{{java_version}}-installer
+    name: openjdk-{{java_version}}-jdk
     state: present
-    update_cache: yes
 
 - name: install Maven
   become_user: root
@@ -30,7 +15,7 @@
   become_user: "{{java_username}}"
   lineinfile:
     create: yes
-    line: "export JAVA_HOME=/usr/lib/jvm/java-{{java_version}}-oracle"
-    path: /home/{{java_username}}/.zshrc-extra
+    dest: /home/{{java_username}}/.zshrc-extra
+    line: "export JAVA_HOME=/usr/lib/jvm/java-{{java_version}}-openjdk-amd64"
     regexp: "^export JAVA_HOME"
     state: present

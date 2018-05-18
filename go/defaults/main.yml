@@ -22,4 +22,5 @@ go_extra_packages:
   - golang.org/x/tools/cmd/gorename
   - golang.org/x/tools/cmd/guru
 go_path: /opt/devel/projects/go
-go_version: 1.9
+go_version: "1.10"
+

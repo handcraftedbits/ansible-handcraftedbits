@@ -1,10 +1,4 @@
 ---
-- name: add apt repository
-  become_user: root
-  apt_repository:
-    repo: ppa:ubuntu-elisp/ppa
-    state: present
-
 - name: install package
   become_user: root
   apt:
@@ -30,3 +24,4 @@
   with_items:
     - { src: "emacs/.emacs", dest: ".emacs" }
     - { src: "emacs/config.org", dest: ".emacs.d/config.org" }
+

@@ -1,0 +1,40 @@
+---
+- name: install CLI tool
+  become_user: "{{aws_username}}"
+  command: pip install awscli --upgrade --user
+
+- name: create AWS configuration directory
+  become_user: "{{aws_username}}"
+  file:
+    group: "{{aws_username}}"
+    owner: "{{aws_username}}"
+    path: /home/{{aws_username}}/.aws
+    state: directory
+
+- name: create AWS configuration file
+  become_user: "{{aws_username}}"
+  template:
+    dest: /home/{{aws_username}}/.aws/config
+    group: "{{aws_username}}"
+    mode: "0600"
+    owner: "{{aws_username}}"
+    src: ../templates/config.j2
+
+- name: create AWS credentials file
+  become_user: "{{aws_username}}"
+  template:
+    dest: /home/{{aws_username}}/.aws/credentials
+    group: "{{aws_username}}"
+    mode: "0600"
+    owner: "{{aws_username}}"
+    src: ../templates/credentials.j2
+
+- name: add ZSH alias
+  become_user: "{{aws_username}}"
+  lineinfile:
+    create: yes
+    dest: /home/{{aws_username}}/.zshrc-extra
+    line: "alias aws='~/.local/bin/aws'"
+    regexp: "^alias aws"
+    state: present
+

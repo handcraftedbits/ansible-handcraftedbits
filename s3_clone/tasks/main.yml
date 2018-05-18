@@ -33,8 +33,8 @@
   become_user: "{{s3_clone_username}}"
   lineinfile:
     create: yes
+    dest: /home/{{s3_clone_username}}/.zshrc-extra
     line: "alias aws='~/.local/bin/aws'"
-    path: /home/{{s3_clone_username}}/.zshrc-extra
     regexp: "^alias aws"
     state: present
 

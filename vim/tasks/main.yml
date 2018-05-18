@@ -1,10 +1,4 @@
 ---
-- name: add apt repositories
-  become_user: root
-  apt_repository:
-    repo: ppa:neovim-ppa/stable
-    state: present
-
 - name: install packages
   become_user: root
   apt:
@@ -13,13 +7,7 @@
     update_cache: yes
   with_items:
     - exuberant-ctags
-    - neovim
-
-- name:  create configuration directory
-  become_user: "{{vim_username}}"
-  file:
-    path: /home/{{vim_username}}/.config/nvim
-    state: directory
+    - vim
 
 - name: link dotfiles
   become_user: "{{vim_username}}"
@@ -29,14 +17,6 @@
     state: link
   with_items:
     - { src: "vim/.vimrc", dest: ".vimrc" }
-    - { src: "vim/.vimrc", dest: ".config/nvim/init.vim" }
-
-- name: link Neovim configuration directory
-  become_user: "{{vim_username}}"
-  file:
-    dest: /home/{{vim_username}}/.vim
-    src: /home/{{vim_username}}/.config/nvim
-    state: link
 
 - name: install Vundle
   become_user: "{{vim_username}}"
@@ -54,6 +34,5 @@
     name: "{{item.name}}"
     path: "{{item.path}}"
   with_items:
-    - { name: "editor", path: "/usr/bin/nvim" }
-    - { name: "vi", path: "/usr/bin/nvim" }
-    - { name: "vim", path: "/usr/bin/nvim" }
+    - { name: "editor", path: "/usr/bin/vim" }
+    - { name: "vi", path: "/usr/bin/vim" }
