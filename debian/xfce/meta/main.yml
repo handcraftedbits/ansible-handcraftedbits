@@ -1,5 +1,5 @@
 ---
 dependencies:
-  - role: handcraftedbits/dotfiles_clone
+  - role: handcraftedbits/debian/dotfiles_clone
     dotfiles_clone_password: "{{xfce_password}}"
     dotfiles_clone_username: "{{xfce_username}}"

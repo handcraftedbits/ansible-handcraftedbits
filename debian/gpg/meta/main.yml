@@ -1,5 +1,5 @@
 ---
 dependencies:
-  - role: handcraftedbits/dotfiles_clone
+  - role: handcraftedbits/debian/dotfiles_clone
     dotfiles_clone_password: "{{gpg_password}}"
     dotfiles_clone_username: "{{gpg_username}}"

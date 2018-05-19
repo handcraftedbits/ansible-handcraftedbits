@@ -1,5 +1,5 @@
 ---
 dependencies:
-  - role: handcraftedbits/create_user
+  - role: handcraftedbits/debian/create_user
     create_user_password: "{{dotfiles_clone_password}}"
     create_user_username: "{{dotfiles_clone_username}}"

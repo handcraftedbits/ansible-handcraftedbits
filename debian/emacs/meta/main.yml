@@ -1,5 +1,5 @@
 ---
 dependencies:
-  - role: handcraftedbits/dotfiles_clone
+  - role: handcraftedbits/debian/dotfiles_clone
     dotfiles_clone_password: "{{emacs_password}}"
     dotfiles_clone_username: "{{emacs_username}}"

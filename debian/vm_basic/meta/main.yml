@@ -1,21 +1,21 @@
 ---
 dependencies:
-  - role: handcraftedbits/create_user
+  - role: handcraftedbits/debian/create_user
     create_user_fullname: "{{vm_basic_user_fullname}}"
     create_user_groups: sudo
     create_user_password: "{{vm_basic_password}}"
     create_user_username: "{{vm_basic_username}}"
-  - role: handcraftedbits/ssh
+  - role: handcraftedbits/debian/ssh
     ssh_github_id: "{{vm_basic_github_id}}"
     ssh_password: "{{vm_basic_password}}"
     ssh_port: "{{vm_basic_ssh_port}}"
     ssh_username: "{{vm_basic_username}}"
-  - role: handcraftedbits/tmux
+  - role: handcraftedbits/debian/tmux
     tmux_password: "{{vm_basic_password}}"
     tmux_username: "{{vm_basic_username}}"
-  - role: handcraftedbits/vim
+  - role: handcraftedbits/debian/vim
     vim_password: "{{vm_basic_password}}"
     vim_username: "{{vm_basic_username}}"
-  - role: handcraftedbits/zsh
+  - role: handcraftedbits/debian/zsh
     zsh_password: "{{vm_basic_password}}"
     zsh_username: "{{vm_basic_username}}"

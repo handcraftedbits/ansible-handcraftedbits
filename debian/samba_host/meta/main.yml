@@ -1,6 +1,6 @@
 ---
 dependencies:
-  - role: handcraftedbits/docker_host
+  - role: handcraftedbits/debian/docker_host
     docker_host_hostname: "{{samba_host_hostname}}"
     docker_host_password: "{{samba_host_password}}"
     docker_host_username: "{{samba_host_username}}"
