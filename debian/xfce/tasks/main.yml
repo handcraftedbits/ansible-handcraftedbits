@@ -2,9 +2,12 @@
 - name: install package
   become_user: root
   apt:
-    name: xfce4
+    name: "{{item}}"
     state: present
     update_cache: yes
+  with_items:
+    - xfce4
+    - xfce4-power-manager
 
 - name: remove configuration directories
   become_user: "{{xfce_username}}"
