@@ -6,6 +6,7 @@ vscode_extensions:
   - PeterJausovec.vscode-docker
   - haaaad.ansible
   - humao.rest-client
+  - mauve.terraform
   - ms-vscode.Go
   - robertohuertasm.vscode-icons
   - shuworks.vscode-table-formatter
